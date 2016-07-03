@@ -1,0 +1,125 @@
+package main
+
+import (
+	"bufio"
+	"bytes"
+	"fmt"
+	"os"
+	"path/filepath"
+	"strconv"
+	"strings"
+
+	"github.com/go-gl/gl/v4.1-core/gl"
+)
+
+func parseMaterialFromFile(filename string, dataDir string) (*material, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+
+	scanner := bufio.NewScanner(file)
+	scanner.Scan()
+	return parseMaterial(scanner, dataDir)
+
+}
+
+func parseMaterial(scanner *bufio.Scanner, dataDir string) (*material, error) {
+	mat := &material{}
+	var err error
+	for scanner.Scan() && !strings.HasPrefix(scanner.Text(), "newmtl") {
+		innerScan := bufio.NewScanner(bytes.NewReader(scanner.Bytes()))
+		innerScan.Split(bufio.ScanWords)
+		if !innerScan.Scan() {
+			return nil, fmt.Errorf("bad material line %s", innerScan.Text())
+		}
+
+		switch innerScan.Text() {
+		case "Ka":
+			mat.ambientColor, err = parseFloats(innerScan, scanner.Text())
+			if err != nil {
+				return nil, err
+			}
+		case "Kd":
+			mat.diffuseColor, err = parseFloats(innerScan, scanner.Text())
+			if err != nil {
+				return nil, err
+			}
+		case "Ks":
+			mat.specularColor, err = parseFloats(innerScan, scanner.Text())
+			if err != nil {
+				return nil, err
+			}
+		case "map_Ka":
+			if !innerScan.Scan() {
+				return nil, fmt.Errorf(
+					"expected filename while reading material")
+			}
+			mat.ambientTexMap, err = newTexture(filepath.Join(dataDir, innerScan.Text()))
+			if err != nil {
+				return nil, err
+			}
+		case "map_Kd":
+			if !innerScan.Scan() {
+				return nil, fmt.Errorf(
+					"expected filename while reading material")
+			}
+			mat.diffuseTexMap, err = newTexture(filepath.Join(dataDir, innerScan.Text()))
+			if err != nil {
+				return nil, err
+			}
+		case "illum":
+			if !innerScan.Scan() {
+				return nil, fmt.Errorf(
+					"expected number while reading illum of material")
+			}
+			illum, err := strconv.ParseInt(innerScan.Text(), 32, 10)
+			if err != nil {
+				return nil, fmt.Errorf("while parsing '%s': %s", innerScan.Text(), err)
+			}
+			mat.illum = int(illum)
+		default:
+			fmt.Printf("ignoring %s\n", scanner.Text())
+		}
+
+	}
+
+	//TODO: Figure out which shaders to use
+	shaders, err := compileShaders(mat.illum)
+	if err != nil {
+		return nil, err
+	}
+
+	mat.program, err = newProgram(shaders...)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Printf("returning %#v\n", mat)
+	return mat, nil
+}
+
+type material struct {
+	ambientColor  []float32
+	diffuseColor  []float32
+	specularColor []float32
+	ambientTexMap uint32
+	diffuseTexMap uint32
+	illum         int
+	program       uint32
+}
+
+func (m *material) draw() {
+	if m.diffuseColor != nil {
+		fmt.Println("diffuse", m.diffuseColor)
+		diffuseLoc := gl.GetUniformLocation(m.program, gl.Str("diffuseColor\x00"))
+		gl.Uniform3f(diffuseLoc, m.diffuseColor[0]*20, m.diffuseColor[1]*20, m.diffuseColor[2]*20)
+	}
+	if m.ambientColor != nil {
+		ambientLoc := gl.GetUniformLocation(m.program, gl.Str("ambientColor\x00"))
+		gl.Uniform3f(ambientLoc, m.ambientColor[0]*20, m.ambientColor[1]*20, m.ambientColor[2]*20)
+	}
+	if m.specularColor != nil {
+		specularLoc := gl.GetUniformLocation(m.program, gl.Str("specularColor\x00"))
+		gl.Uniform3f(specularLoc, m.specularColor[0]*20, m.specularColor[1]*20, m.specularColor[2]*20)
+	}
+}
