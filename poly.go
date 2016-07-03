@@ -37,6 +37,8 @@ func (p *Poly) getProgram() uint32 {
 }
 
 func (p *Poly) draw() {
+	errar := gl.GetError()
+	fmt.Printf("Got errar %s\n", errar)
 	if p.material != nil {
 		gl.ActiveTexture(gl.TEXTURE0)
 		//fmt.Printf("tex %s\n", p.material.diffuseTexMap)
@@ -53,13 +55,13 @@ func (p *Poly) draw() {
 	gl.EnableVertexAttribArray(vertAttrib)
 	gl.VertexAttribPointer(vertAttrib, 3, gl.FLOAT, false, 3*4, gl.PtrOffset(0))
 
-	/*
-		texCoordAttrib := uint32(gl.GetAttribLocation(program, gl.Str("UV\x00")))
+	if p.uvs != nil {
+		texCoordAttrib := uint32(gl.GetAttribLocation(p.getProgram(), gl.Str("UV\x00")))
 		gl.BindBuffer(gl.ARRAY_BUFFER, p.uvId)
 		gl.BufferData(gl.ARRAY_BUFFER, len(p.uvs)*4, gl.Ptr(p.uvs), gl.STATIC_DRAW)
 		gl.EnableVertexAttribArray(texCoordAttrib)
 		gl.VertexAttribPointer(texCoordAttrib, 2, gl.FLOAT, false, 2*4, gl.PtrOffset(0))
-	*/
+	}
 
 	if len(p.normals) > 0 {
 		gl.BindBuffer(gl.ARRAY_BUFFER, p.normalId)
@@ -72,6 +74,10 @@ func (p *Poly) draw() {
 	model = p.pos.Mul4(model)
 	modelUniform := gl.GetUniformLocation(p.getProgram(), gl.Str("model\x00"))
 	gl.UniformMatrix4fv(modelUniform, 1, false, &model[0])
+	errar = gl.GetError()
+	fmt.Printf("Got second errar %s\n", errar)
 
 	gl.DrawArrays(gl.TRIANGLES, 0, int32(len(p.verts)/3))
+	errar = gl.GetError()
+	fmt.Printf("Got errar end %s\n", errar)
 }

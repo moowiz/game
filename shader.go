@@ -34,7 +34,6 @@ func compileShaders(illum int) ([]uint32, error) {
 }
 
 func readShader(filename string) (uint32, error) {
-	fmt.Println("reading", filename)
 	shaderType := typeFromExtension(filepath.Ext(filename))
 	contents, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -56,10 +55,8 @@ func typeFromExtension(ext string) uint32 {
 }
 
 func newProgram(shaders ...uint32) (uint32, error) {
-	fmt.Println("hi")
 	program := gl.CreateProgram()
 
-	fmt.Println(shaders)
 	for _, shader := range shaders {
 		gl.AttachShader(program, shader)
 	}

@@ -111,6 +111,9 @@ func main() {
 		}
 	})
 
+	errar := gl.GetError()
+	fmt.Printf("Got errar %s\n", errar)
+
 	previousTime := glfw.GetTime()
 	for !window.ShouldClose() {
 		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
@@ -126,12 +129,17 @@ func main() {
 		// Render
 		gl.BindVertexArray(vao)
 		square.draw()
+
+		errar := gl.GetError()
+		fmt.Printf("Got errar %s\n", errar)
+
 		world.apply(chicken.getProgram(), elapsed)
 		chicken.draw()
 
 		// Maintenance
 		window.SwapBuffers()
 		glfw.PollEvents()
+		return
 	}
 }
 

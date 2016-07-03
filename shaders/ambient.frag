@@ -41,6 +41,6 @@ void main() {
 		MaterialAmbientColor +
 		// Diffuse : "color" of the object
 		diffuseColor * LightColor * LightPower * cosTheta / (distance*distance);
-	color = vec3(0.8, 0, 0);
+	color = texture(tex, fragUV).rgb;
 	//color = diffuseColor;
 }
