@@ -42,9 +42,6 @@ func parsePoly(r io.Reader, dataDir string) (*Poly, error) {
 		innerScan := bufio.NewScanner(bytes.NewReader(scanner.Bytes()))
 		innerScan.Split(bufio.ScanWords)
 		if !innerScan.Scan() {
-			if !strings.HasPrefix(innerScan.Text(), "#") {
-				fmt.Printf("ignoring %s", innerScan.Text())
-			}
 			continue
 		}
 		command := innerScan.Text()
@@ -122,7 +119,7 @@ func parsePoly(r io.Reader, dataDir string) (*Poly, error) {
 
 			poly.material = matMap[name]
 		default:
-			fmt.Printf("Ignoring line %s\n", scanner.Text())
+			//fmt.Printf("Ignoring line %s\n", scanner.Text())
 		}
 	}
 

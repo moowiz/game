@@ -83,7 +83,7 @@ func parseMaterial(scanner *bufio.Scanner, dataDir string) (*material, error) {
 			}
 			mat.illum = int(illum)
 		default:
-			fmt.Printf("ignoring %s\n", scanner.Text())
+			//fmt.Printf("ignoring %s\n", scanner.Text())
 		}
 
 	}

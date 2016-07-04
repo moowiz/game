@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"runtime"
+	gtime "time"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/glfw/v3.1/glfw"
@@ -14,6 +15,7 @@ import (
 
 const windowWidth = 800
 const windowHeight = 600
+const secondsPerFrame = 1 / 60
 
 var rootDir string
 
@@ -64,11 +66,8 @@ func main() {
 	}
 
 	// Configure the vertex data
-	var vao uint32
-	gl.GenVertexArrays(1, &vao)
-	gl.BindVertexArray(vao)
-
 	square := makeSquare()
+
 	chicken, err := readOBJ("data/r2d2.obj")
 	if err != nil {
 		panic(err)
@@ -111,27 +110,23 @@ func main() {
 		}
 	})
 
-	errar := gl.GetError()
-	fmt.Printf("Got errar %s\n", errar)
-
 	previousTime := glfw.GetTime()
+	sofar := 0
 	for !window.ShouldClose() {
 		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
 		// Update
+		// Time is in seconds
 		time := glfw.GetTime()
 		elapsed := time - previousTime
+		sofar += elapsed
+		fmt.Printf("elapsed %v\n", elapsed)
 		previousTime = time
 
 		p.updateWindow(window, elapsed)
 
 		world.apply(square.getProgram(), elapsed)
-		// Render
-		gl.BindVertexArray(vao)
 		square.draw()
-
-		errar := gl.GetError()
-		fmt.Printf("Got errar %s\n", errar)
 
 		world.apply(chicken.getProgram(), elapsed)
 		chicken.draw()
@@ -139,7 +134,11 @@ func main() {
 		// Maintenance
 		window.SwapBuffers()
 		glfw.PollEvents()
-		return
+
+		// Constant FPS
+		diff := secondsPerFrame - elapsed
+		fmt.Println("sofar", sofar)
+		//gtime.Sleep(gtime.Duration(diff) * gtime.Second)
 	}
 }
 

@@ -56,6 +56,7 @@ func typeFromExtension(ext string) uint32 {
 
 func newProgram(shaders ...uint32) (uint32, error) {
 	program := gl.CreateProgram()
+	fmt.Printf("making %v for %v\n", program, shaders)
 
 	for _, shader := range shaders {
 		gl.AttachShader(program, shader)

@@ -5,9 +5,9 @@ uniform mat4 camera;
 uniform mat4 model;
 uniform vec3 light;
 
-in vec3 vert;
-in vec2 UV;
-in vec3 normal;
+layout(location = 0) in vec3 vert;
+layout(location = 1) in vec2 UV;
+layout(location = 2) in vec3 normal;
 
 out vec2 fragUV;
 out vec3 positionWorld;
