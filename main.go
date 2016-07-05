@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 	"runtime"
-	gtime "time"
+	//gtime "time"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/glfw/v3.1/glfw"
@@ -61,23 +61,27 @@ func main() {
 	world := &world{
 		player: p,
 		projection: mgl32.Perspective(
-			mgl32.DegToRad(60.0), float32(windowWidth)/windowHeight, 0.1, 10.0),
+			mgl32.DegToRad(60.0), float32(windowWidth)/windowHeight, 0.1, 100.0),
 		lightPos: []float32{4, 4, 4},
 	}
 
 	// Configure the vertex data
 	square := makeSquare()
 
-	chicken, err := readOBJ("data/r2d2.obj")
+	chicken, err := readOBJ("data/cube.obj")
 	if err != nil {
 		panic(err)
 	}
 	chicken.init()
 
+	font, err := newFont()
+	if err != nil {
+		panic(err)
+	}
+
 	// Configure global settings
 	gl.Enable(gl.DEPTH_TEST)
 	gl.DepthFunc(gl.LESS)
-	gl.ClearColor(1.0, 1.0, 1.0, 1.0)
 
 	window.SetKeyCallback(func(w *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
 		if key == glfw.KeyW {
@@ -111,16 +115,16 @@ func main() {
 	})
 
 	previousTime := glfw.GetTime()
-	sofar := 0
+	sinceFPS := 0.0
+	fps := -1
 	for !window.ShouldClose() {
+		gl.ClearColor(1.0, 1.0, 1.0, 1.0)
 		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
 		// Update
 		// Time is in seconds
 		time := glfw.GetTime()
 		elapsed := time - previousTime
-		sofar += elapsed
-		fmt.Printf("elapsed %v\n", elapsed)
 		previousTime = time
 
 		p.updateWindow(window, elapsed)
@@ -131,13 +135,24 @@ func main() {
 		world.apply(chicken.getProgram(), elapsed)
 		chicken.draw()
 
+		if sinceFPS > 1 || fps == -1 {
+			fps = int(1 / elapsed)
+			sinceFPS = 0
+		} else {
+			sinceFPS += elapsed
+		}
+
+		if fps != -1 {
+			font.DrawString(fmt.Sprintf("%v", fps))
+		}
+
 		// Maintenance
 		window.SwapBuffers()
 		glfw.PollEvents()
 
 		// Constant FPS
-		diff := secondsPerFrame - elapsed
-		fmt.Println("sofar", sofar)
+		//diff := secondsPerFrame - elapsed
+		//fmt.Println("sofar", sofar, "diff", diff)
 		//gtime.Sleep(gtime.Duration(diff) * gtime.Second)
 	}
 }

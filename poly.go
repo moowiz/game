@@ -66,13 +66,7 @@ func (p *Poly) getProgram() uint32 {
 }
 
 func (p *Poly) draw() {
-	if p.material != nil && false {
-		gl.ActiveTexture(gl.TEXTURE0)
-		//fmt.Printf("tex %s\n", p.material.diffuseTexMap)
-		gl.BindTexture(gl.TEXTURE_2D, p.material.diffuseTexMap)
-		textureUniform := gl.GetUniformLocation(p.getProgram(), gl.Str("tex\x00"))
-		gl.Uniform1i(textureUniform, 0)
-
+	if p.material != nil {
 		p.material.draw()
 	}
 

@@ -21,16 +21,20 @@ func compileShaders(illum int) ([]uint32, error) {
 	if !ok {
 		return nil, fmt.Errorf("no shader found for illumination %v", illum)
 	}
-	v, err := readShader(filepath.Join(rootDir, "shaders/default.vert"))
-	if err != nil {
-		return nil, err
-	}
-	f, err := readShader(filepath.Join(rootDir, "shaders/"+shaderName))
-	if err != nil {
-		return nil, err
+	return readShaders("shaders/default.vert", "shaders/"+shaderName)
+}
+
+func readShaders(filenames ...string) ([]uint32, error) {
+	shaders := make([]uint32, len(filenames))
+	var err error
+	for i, fname := range filenames {
+		shaders[i], err = readShader(fname)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	return []uint32{v, f}, nil
+	return shaders, nil
 }
 
 func readShader(filename string) (uint32, error) {

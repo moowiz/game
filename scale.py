@@ -17,7 +17,7 @@ def main():
             line = line.strip()
             if line.startswith('v '):
                 split = line.split(' ')
-                parsed = [str(float(x)*amount) for x in split[1:]]
+                parsed = [str(float(x)/amount) for x in split[1:]]
                 line = ' '.join(split[:1] + parsed)
             new_contents.append(line)
 

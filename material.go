@@ -114,15 +114,13 @@ type material struct {
 
 func (m *material) draw() {
 	if m.diffuseColor != nil {
-		fmt.Println("diffuse", m.diffuseColor)
 		diffuseLoc := gl.GetUniformLocation(m.program, gl.Str("diffuseColor\x00"))
 		gl.Uniform3f(diffuseLoc, m.diffuseColor[0]*20, m.diffuseColor[1]*20, m.diffuseColor[2]*20)
 	}
 
-	diffuseMapLoc := gl.GetUniformLocation(m.program, gl.Str("tex\x00"))
 	gl.ActiveTexture(gl.TEXTURE0)
 	gl.BindTexture(gl.TEXTURE_2D, m.diffuseTexMap)
-	gl.Uniform1i(diffuseMapLoc, gl.TEXTURE0)
+	//gl.Uniform1i(diffuseMapLoc, gl.TEXTURE0)
 
 	if m.ambientColor != nil {
 		ambientLoc := gl.GetUniformLocation(m.program, gl.Str("ambientColor\x00"))
