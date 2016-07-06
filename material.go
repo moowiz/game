@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
+	_ "golang.org/x/image/bmp"
 )
 
 func parseMaterialFromFile(filename string, dataDir string) (*material, error) {
@@ -148,6 +149,37 @@ func newTexture(file string) (uint32, error) {
 	}
 	draw.Draw(rgba, rgba.Bounds(), img, image.Point{0, 0}, draw.Src)
 
+	newP := make([]uint8, len(rgba.Pix))
+	maxX := rgba.Rect.Max.X
+	maxY := rgba.Rect.Max.Y
+	for x := 0; x < maxX; x += 1 {
+		for y := 0; y < maxY; y += 1 {
+			for offset := 0; offset < 4; offset += 1 {
+				v := rgba.Pix[y*rgba.Stride+x*4+offset]
+				newP[(maxY-y-1)*rgba.Stride+x*4+offset] = v
+			}
+		}
+	}
+
+	/*
+		// Save that RGBA image to disk.
+			outFile, err := os.Create("out.png")
+			if err != nil {
+				panic(err)
+			}
+			defer outFile.Close()
+			b := bufio.NewWriter(outFile)
+			err = png.Encode(b, rgba)
+			if err != nil {
+				panic(err)
+			}
+			err = b.Flush()
+			if err != nil {
+				panic(err)
+			}
+			fmt.Println("Wrote out.png OK.")
+	*/
+
 	var texture uint32
 	gl.GenTextures(1, &texture)
 	gl.BindTexture(gl.TEXTURE_2D, texture)
@@ -164,7 +196,7 @@ func newTexture(file string) (uint32, error) {
 		0,
 		gl.RGBA,
 		gl.UNSIGNED_BYTE,
-		gl.Ptr(rgba.Pix))
+		gl.Ptr(newP))
 
 	return texture, nil
 }

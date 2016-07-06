@@ -35,6 +35,8 @@ func (p *Poly) init() {
 	gl.DisableVertexAttribArray(0)
 
 	if len(p.uvs) > 0 {
+		fmt.Printf("vert %v\n", p.verts[len(p.verts)-10:])
+		fmt.Printf("uvs %v\n", p.uvs[len(p.uvs)-10:])
 		var uvId uint32
 		gl.GenBuffers(1, &uvId)
 		gl.BindBuffer(gl.ARRAY_BUFFER, uvId)
@@ -56,6 +58,8 @@ func (p *Poly) init() {
 		gl.VertexAttribPointer(2, 3, gl.FLOAT, false, 3*4, gl.PtrOffset(0))
 		gl.DisableVertexAttribArray(2)
 	}
+
+	gl.BindBuffer(gl.ARRAY_BUFFER, 0)
 
 	p.model = mgl32.Ident4()
 	p.pos = mgl32.Translate3D(0, 0, 0)

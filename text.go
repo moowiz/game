@@ -22,6 +22,7 @@ type Font struct {
 	vao     uint32
 	size    float64
 	spacing float64
+	rgba    *image.RGBA
 }
 
 func (f *Font) init() error {
@@ -33,6 +34,7 @@ func (f *Font) init() error {
 	f.program, err = newProgram(shaders...)
 	f.size = 24.0
 	f.spacing = 1.5
+	f.setUpGL()
 	return err
 }
 
@@ -54,34 +56,35 @@ func newFont() (*Font, error) {
 	if err := f.init(); err != nil {
 		return nil, err
 	}
-	f.setUpGL()
 	dpi := 72.0
 
 	// Initialize the context.
 	fg := image.Black
+	f.rgba = image.NewRGBA(image.Rect(0, 0, windowWidth, windowHeight))
 	c.SetDPI(dpi)
 	c.SetFont(freeFont)
 	c.SetFontSize(f.size)
 	c.SetSrc(fg)
 	c.SetHinting(font.HintingNone)
+	c.SetClip(f.rgba.Bounds())
+	c.SetDst(f.rgba)
+	bg := image.Transparent
+	draw.Draw(f.rgba, f.rgba.Bounds(), bg, image.ZP, draw.Src)
 
 	return f, err
 }
 
-func (f *Font) DrawString(text string) error {
-	bg := image.Transparent
-	rgba := image.NewRGBA(image.Rect(0, 0, windowWidth, windowHeight))
-	draw.Draw(rgba, rgba.Bounds(), bg, image.ZP, draw.Src)
-	f.c.SetClip(rgba.Bounds())
-	f.c.SetDst(rgba)
-
-	// Draw the text.
-	pt := freetype.Pt(10, 10+int(f.c.PointToFixed(f.size)>>6))
-	_, err := f.c.DrawString(text, pt)
+func (f *Font) Printf(x, y int, text string, a ...interface{}) error {
+	s := fmt.Sprintf(text, a...)
+	pt := freetype.Pt(x, y+int(f.c.PointToFixed(f.size)>>6))
+	_, err := f.c.DrawString(s, pt)
 	if err != nil {
 		return err
 	}
+	return nil
+}
 
+func (f *Font) Draw() error {
 	gl.ActiveTexture(gl.TEXTURE0)
 	gl.BindTexture(gl.TEXTURE_2D, f.texture)
 
@@ -94,13 +97,12 @@ func (f *Font) DrawString(text string) error {
 		gl.TEXTURE_2D,
 		0,
 		gl.RGBA,
-		int32(rgba.Rect.Size().X),
-		int32(rgba.Rect.Size().Y),
+		int32(f.rgba.Rect.Size().X),
+		int32(f.rgba.Rect.Size().Y),
 		0,
 		gl.RGBA,
 		gl.UNSIGNED_BYTE,
-		//gl.Ptr(newArr))
-		gl.Ptr(rgba.Pix))
+		gl.Ptr(f.rgba.Pix))
 
 	gl.Enable(gl.BLEND)
 	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
@@ -116,6 +118,10 @@ func (f *Font) DrawString(text string) error {
 
 	gl.DisableVertexAttribArray(0)
 	gl.DisableVertexAttribArray(1)
+
+	// Clear for next time
+	bg := image.Transparent
+	draw.Draw(f.rgba, f.rgba.Bounds(), bg, image.ZP, draw.Src)
 	return nil
 }
 

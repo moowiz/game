@@ -8,5 +8,5 @@ uniform sampler2D tex;
 uniform vec3 diffuseColor;
 
 void main() {
-	color = texture(tex, fragUV).rgb * diffuseColor;
+	color = texture(tex, fragUV).rgb;
 }

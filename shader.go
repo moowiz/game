@@ -11,8 +11,8 @@ import (
 
 var illumToShader = map[int]string{
 	0: "basic.frag",
-	1: "ambient.frag",
-	2: "ambient.frag",
+	1: "basic.frag",
+	2: "basic.frag",
 }
 
 func compileShaders(illum int) ([]uint32, error) {

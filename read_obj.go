@@ -71,6 +71,7 @@ func parsePoly(r io.Reader, dataDir string) (*Poly, error) {
 			tmpVIs := []int{}
 			tmpUVIs := []int{}
 			tmpNIs := []int{}
+			num := 0
 			for innerScan.Scan() {
 				bySlash := strings.Split(innerScan.Text(), "/")
 				parsed, err := strconv.ParseInt(bySlash[0], 10, 32)
@@ -96,6 +97,10 @@ func parsePoly(r io.Reader, dataDir string) (*Poly, error) {
 						"while parsing '%s': %s", scanner.Text(), err)
 				}
 				tmpNIs = append(tmpNIs, int(parsed))
+				if num > 3 {
+					fmt.Println("more than 3")
+				}
+				num += 1
 			}
 			vertIndices = append(vertIndices, tmpVIs)
 			uvIndices = append(uvIndices, tmpUVIs)
@@ -127,11 +132,19 @@ func parsePoly(r io.Reader, dataDir string) (*Poly, error) {
 		face := vertIndices[i]
 		faceUVs := uvIndices[i]
 		faceNormals := normalIndices[i]
-		for ind, vertexIndex := range face {
-			vert := verts[vertexIndex-1]
+		for ind := range face {
+			vert := verts[face[ind]-1]
+			if i < 1 {
+				fmt.Printf("vert %v\n", vert)
+				if len(faceUVs) > 0 {
+					fmt.Printf("uv %v\n", uvs[faceUVs[ind]-1])
+				}
+			}
 			poly.verts = append(poly.verts, vert...)
 			if len(faceUVs) > 0 {
-				poly.uvs = append(poly.uvs, uvs[faceUVs[ind]-1]...)
+				uv := uvs[faceUVs[ind]-1]
+				//uv[1] = 1 - uv[1]
+				poly.uvs = append(poly.uvs, uv...)
 			}
 			if len(faceNormals) > 0 {
 				poly.normals = append(poly.normals, normals[faceNormals[ind]-1]...)

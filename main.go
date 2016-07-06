@@ -66,13 +66,14 @@ func main() {
 	}
 
 	// Configure the vertex data
-	square := makeSquare()
+	//square := makeSquare()
 
-	chicken, err := readOBJ("data/cube.obj")
+	chicken, err := readOBJ("data/r2d2.obj")
 	if err != nil {
 		panic(err)
 	}
 	chicken.init()
+	chicken.pos = mgl32.Translate3D(0, -0.5, 0)
 
 	font, err := newFont()
 	if err != nil {
@@ -129,8 +130,8 @@ func main() {
 
 		p.updateWindow(window, elapsed)
 
-		world.apply(square.getProgram(), elapsed)
-		square.draw()
+		//world.apply(square.getProgram(), elapsed)
+		//square.draw()
 
 		world.apply(chicken.getProgram(), elapsed)
 		chicken.draw()
@@ -142,9 +143,11 @@ func main() {
 			sinceFPS += elapsed
 		}
 
+		font.Printf(10, 30, "%v %v", p.position[0], p.position[2])
 		if fps != -1 {
-			font.DrawString(fmt.Sprintf("%v", fps))
+			font.Printf(10, 10, "%v", fps)
 		}
+		font.Draw()
 
 		// Maintenance
 		window.SwapBuffers()
