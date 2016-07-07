@@ -1,0 +1,9 @@
+{
+  "objects" : [
+	{
+	  "id": "r2d2",
+	  "object": "r2d2",
+	  "location": [0, -0.5, 3]
+	}
+  ]
+}

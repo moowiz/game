@@ -1,4 +1,3 @@
-// Renders a textured spinning cube using GLFW 3.1 and OpenGL 4.1 core forward-compatible profile.
 package main
 
 import (
@@ -57,23 +56,14 @@ func main() {
 	version := gl.GoStr(gl.GetString(gl.VERSION))
 	fmt.Println("OpenGL version", version)
 
-	p := newPlayer()
-	world := &world{
-		player: p,
-		projection: mgl32.Perspective(
-			mgl32.DegToRad(60.0), float32(windowWidth)/windowHeight, 0.1, 100.0),
-		lightPos: []float32{4, 4, 4},
-	}
-
 	// Configure the vertex data
 	//square := makeSquare()
 
-	chicken, err := readOBJ("data/r2d2.obj")
+	level, err := loadLevel("data/levels/basic.json")
 	if err != nil {
 		panic(err)
 	}
-	chicken.init()
-	chicken.pos = mgl32.Translate3D(0, -0.5, 0)
+	p := level.player
 
 	font, err := newFont()
 	if err != nil {
@@ -130,11 +120,7 @@ func main() {
 
 		p.updateWindow(window, elapsed)
 
-		//world.apply(square.getProgram(), elapsed)
-		//square.draw()
-
-		world.apply(chicken.getProgram(), elapsed)
-		chicken.draw()
+		level.draw(elapsed)
 
 		if sinceFPS > 1 || fps == -1 {
 			fps = int(1 / elapsed)
@@ -143,7 +129,7 @@ func main() {
 			sinceFPS += elapsed
 		}
 
-		font.Printf(10, 30, "%v %v", p.position[0], p.position[2])
+		font.Printf(10, 30, "%v %v", p.body.Position()[0], p.body.Position()[2])
 		if fps != -1 {
 			font.Printf(10, 10, "%v", fps)
 		}
@@ -168,80 +154,4 @@ func makeSquare() *Poly {
 	square.init()
 	square.pos = mgl32.Translate3D(0, 5, 0)
 	return square
-}
-
-/*
-func makeCube() *Poly {
-	return &Poly{
-		verts: []float32{
-			//  X, Y, Z, U, V
-			// Bottom
-			-1.0, -1.0, -1.0, 0.0, 0.0,
-			1.0, -1.0, -1.0, 1.0, 0.0,
-			-1.0, -1.0, 1.0, 0.0, 1.0,
-			1.0, -1.0, -1.0, 1.0, 0.0,
-			1.0, -1.0, 1.0, 1.0, 1.0,
-			-1.0, -1.0, 1.0, 0.0, 1.0,
-
-			// Top
-			-1.0, 1.0, -1.0, 0.0, 0.0,
-			-1.0, 1.0, 1.0, 0.0, 1.0,
-			1.0, 1.0, -1.0, 1.0, 0.0,
-			1.0, 1.0, -1.0, 1.0, 0.0,
-			-1.0, 1.0, 1.0, 0.0, 1.0,
-			1.0, 1.0, 1.0, 1.0, 1.0,
-
-			// Front
-			-1.0, -1.0, 1.0, 1.0, 0.0,
-			1.0, -1.0, 1.0, 0.0, 0.0,
-			-1.0, 1.0, 1.0, 1.0, 1.0,
-			1.0, -1.0, 1.0, 0.0, 0.0,
-			1.0, 1.0, 1.0, 0.0, 1.0,
-			-1.0, 1.0, 1.0, 1.0, 1.0,
-
-			// Back
-			-1.0, -1.0, -1.0, 0.0, 0.0,
-			-1.0, 1.0, -1.0, 0.0, 1.0,
-			1.0, -1.0, -1.0, 1.0, 0.0,
-			1.0, -1.0, -1.0, 1.0, 0.0,
-			-1.0, 1.0, -1.0, 0.0, 1.0,
-			1.0, 1.0, -1.0, 1.0, 1.0,
-
-			// Left
-			-1.0, -1.0, 1.0, 0.0, 1.0,
-			-1.0, 1.0, -1.0, 1.0, 0.0,
-			-1.0, -1.0, -1.0, 0.0, 0.0,
-			-1.0, -1.0, 1.0, 0.0, 1.0,
-			-1.0, 1.0, 1.0, 1.0, 1.0,
-			-1.0, 1.0, -1.0, 1.0, 0.0,
-
-			// Right
-			1.0, -1.0, 1.0, 1.0, 1.0,
-			1.0, -1.0, -1.0, 1.0, 0.0,
-			1.0, 1.0, -1.0, 0.0, 0.0,
-			1.0, -1.0, 1.0, 1.0, 1.0,
-			1.0, 1.0, -1.0, 0.0, 0.0,
-			1.0, 1.0, 1.0, 0.0, 1.0,
-		},
-	}
-}
-*/
-
-type world struct {
-	player     *player
-	projection mgl32.Mat4
-	lightPos   []float32
-}
-
-func (w *world) apply(program uint32, elapsed float64) {
-	gl.UseProgram(program)
-
-	w.player.update(program, elapsed)
-	gl.BindFragDataLocation(program, 0, gl.Str("outputColor\x00"))
-
-	projectionUniform := gl.GetUniformLocation(program, gl.Str("projection\x00"))
-	gl.UniformMatrix4fv(projectionUniform, 1, false, &w.projection[0])
-
-	lightUniform := gl.GetUniformLocation(program, gl.Str("light\x00"))
-	gl.Uniform3f(lightUniform, w.lightPos[0], w.lightPos[1], w.lightPos[2])
 }

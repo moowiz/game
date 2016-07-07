@@ -134,12 +134,6 @@ func parsePoly(r io.Reader, dataDir string) (*Poly, error) {
 		faceNormals := normalIndices[i]
 		for ind := range face {
 			vert := verts[face[ind]-1]
-			if i < 1 {
-				fmt.Printf("vert %v\n", vert)
-				if len(faceUVs) > 0 {
-					fmt.Printf("uv %v\n", uvs[faceUVs[ind]-1])
-				}
-			}
 			poly.verts = append(poly.verts, vert...)
 			if len(faceUVs) > 0 {
 				uv := uvs[faceUVs[ind]-1]
@@ -181,7 +175,6 @@ func readMaterialLibrary(filename, dataDir string) (materialMap, error) {
 					"expected material name while reading material")
 			}
 			name := innerScan.Text()
-			fmt.Printf("name %s\n", name)
 			mat, err := parseMaterial(scanner, dataDir)
 			if err != nil {
 				return nil, err

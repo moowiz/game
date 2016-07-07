@@ -99,7 +99,6 @@ func parseMaterial(scanner *bufio.Scanner, dataDir string) (*material, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("returning %#v\n", mat)
 	return mat, nil
 }
 
@@ -111,6 +110,10 @@ type material struct {
 	diffuseTexMap uint32
 	illum         int
 	program       uint32
+	rgba          *image.RGBA
+}
+
+func (m *material) init() {
 }
 
 func (m *material) draw() {
@@ -160,25 +163,6 @@ func newTexture(file string) (uint32, error) {
 			}
 		}
 	}
-
-	/*
-		// Save that RGBA image to disk.
-			outFile, err := os.Create("out.png")
-			if err != nil {
-				panic(err)
-			}
-			defer outFile.Close()
-			b := bufio.NewWriter(outFile)
-			err = png.Encode(b, rgba)
-			if err != nil {
-				panic(err)
-			}
-			err = b.Flush()
-			if err != nil {
-				panic(err)
-			}
-			fmt.Println("Wrote out.png OK.")
-	*/
 
 	var texture uint32
 	gl.GenTextures(1, &texture)

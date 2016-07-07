@@ -1,0 +1,8 @@
+{
+  "model": "data/models/r2d2.obj",
+  "physics": {
+	"aabb": {
+	  "half_size": [1.0, 1.0, 1.0]
+	}
+  }
+}

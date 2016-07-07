@@ -7,13 +7,14 @@ import (
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/glfw/v3.1/glfw"
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/moowiz/game/physics"
 )
 
 var _ = fmt.Print
 
 type player struct {
 	camera                         mgl32.Mat4
-	position                       mgl32.Vec3
+	body                           *physics.Body
 	moveAmount                     int
 	strafeAmount                   int
 	horizontalAngle, verticalAngle float64
@@ -23,8 +24,13 @@ const mouseSpeed = 0.5
 const PlayerSpeed = 1
 
 func newPlayer() *player {
+	box := physics.AABB{
+		Center:   mgl32.Vec3{0, 0, 0},
+		HalfSize: mgl32.Vec3{0.3, 0.5, 0.3},
+	}
+
 	return &player{
-		position:        mgl32.Vec3{0, 0, 0},
+		body:            box.NewBody(float32(math.Inf(1))),
 		horizontalAngle: 0,
 		verticalAngle:   math.Pi / 2,
 	}
@@ -32,7 +38,7 @@ func newPlayer() *player {
 
 func (p *player) getMat4() mgl32.Mat4 {
 	//fmt.Printf("pos %s dir %s up %s\n", p.position, p.getDirection(), p.getUp())
-	return mgl32.LookAtV(p.position, p.position.Add(p.getDirection()), p.getUp())
+	return mgl32.LookAtV(p.body.Position(), p.body.Position().Add(p.getDirection()), p.getUp())
 }
 
 func (p *player) getDirection() mgl32.Vec3 {
@@ -52,20 +58,24 @@ func (p *player) getRight() mgl32.Vec3 {
 }
 
 func (p *player) getUp() mgl32.Vec3 {
-	// Keep order to make +y be up
+	// Keep cross order to make +y be up
 	return p.getRight().Cross(p.getDirection())
 }
 
-func (p *player) update(program uint32, elapsed float64) {
+func (p *player) update(elapsed float64) {
 	dV := p.getDirection().Mul(float32(p.moveAmount))
 	dV = dV.Add(p.getRight().Mul(float32(p.strafeAmount)))
 	dV[1] = 0
 	dV = dV.Normalize().Mul(float32(elapsed))
 
 	if !math.IsNaN(float64(dV.Len())) {
-		p.position = p.position.Add(dV)
+		p.body.SetVelocity(dV)
+	} else {
+		p.body.SetVelocity(mgl32.Vec3{})
 	}
+}
 
+func (p *player) updateCamera(program uint32) {
 	cameraUniform := gl.GetUniformLocation(program, gl.Str("camera\x00"))
 	p.camera = p.getMat4()
 	gl.UniformMatrix4fv(cameraUniform, 1, false, &p.camera[0])

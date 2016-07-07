@@ -18,7 +18,6 @@ type Poly struct {
 	material *material
 	model    mgl32.Mat4
 	pos      mgl32.Mat4
-	angle    float64
 }
 
 func (p *Poly) init() {
@@ -35,8 +34,6 @@ func (p *Poly) init() {
 	gl.DisableVertexAttribArray(0)
 
 	if len(p.uvs) > 0 {
-		fmt.Printf("vert %v\n", p.verts[len(p.verts)-10:])
-		fmt.Printf("uvs %v\n", p.uvs[len(p.uvs)-10:])
 		var uvId uint32
 		gl.GenBuffers(1, &uvId)
 		gl.BindBuffer(gl.ARRAY_BUFFER, uvId)
@@ -60,22 +57,17 @@ func (p *Poly) init() {
 	}
 
 	gl.BindBuffer(gl.ARRAY_BUFFER, 0)
-
-	p.model = mgl32.Ident4()
-	p.pos = mgl32.Translate3D(0, 0, 0)
 }
 
 func (p *Poly) getProgram() uint32 {
 	return p.material.program
 }
 
-func (p *Poly) draw() {
+func (p *Poly) draw(model mgl32.Mat4) {
 	if p.material != nil {
 		p.material.draw()
 	}
 
-	model := mgl32.HomogRotate3D(float32(p.angle), mgl32.Vec3{0, 1, 0})
-	model = p.pos.Mul4(model)
 	modelUniform := gl.GetUniformLocation(p.getProgram(), gl.Str("model\x00"))
 	gl.UniformMatrix4fv(modelUniform, 1, false, &model[0])
 
