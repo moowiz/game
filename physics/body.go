@@ -21,7 +21,7 @@ type body interface {
 
 type Body struct {
 	b        body
-	forces   map[ForceSource]Force
+	forces   map[string]Force
 	position mgl32.Vec3
 	velocity mgl32.Vec3
 	mass     float32
@@ -44,11 +44,11 @@ func (b *Body) SetVelocity(new mgl32.Vec3) {
 }
 
 func (b *Body) EnsureForce(f Force) {
-	_, ok := b.forces[f.Source]
+	_, ok := b.forces[f.Source.ID]
 	if ok {
 		return
 	}
-	b.forces[f.Source] = f
+	b.forces[f.Source.ID] = f
 }
 
 func (b *Body) Collides(other *Body) bool {

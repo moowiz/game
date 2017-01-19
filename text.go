@@ -5,9 +5,11 @@ import (
 	"image"
 	"image/draw"
 	"io/ioutil"
+	"runtime"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/mathgl/mgl32"
+
 	"github.com/golang/freetype"
 	"golang.org/x/image/font"
 )
@@ -38,8 +40,22 @@ func (f *Font) init() error {
 	return err
 }
 
+func getFontName() (string, error) {
+	if runtime.GOOS == "darwin" {
+		return "Library/Fonts/Arial.ttf", nil
+	} else if runtime.GOOS == "windows" {
+		return "C:\\Windows\\Fonts\\arial.ttf", nil
+	}
+	return "", fmt.Errorf("OS %s not supported", runtime.GOOS)
+}
+
 func newFont() (*Font, error) {
-	contents, err := ioutil.ReadFile("/Library/Fonts/Arial.ttf")
+	fontName, err := getFontName()
+	if err != nil {
+		return nil, err
+	}
+
+	contents, err := ioutil.ReadFile(fontName)
 	if err != nil {
 		return nil, err
 	}

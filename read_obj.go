@@ -100,7 +100,7 @@ func parsePoly(r io.Reader, dataDir string) (*Poly, error) {
 				if num > 3 {
 					fmt.Println("more than 3")
 				}
-				num += 1
+				num++
 			}
 			vertIndices = append(vertIndices, tmpVIs)
 			uvIndices = append(uvIndices, tmpUVIs)
