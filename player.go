@@ -26,7 +26,7 @@ const PlayerSpeed = 1
 func newPlayer() *player {
 	box := physics.AABB{
 		Center:   mgl32.Vec3{0, 0, 0},
-		HalfSize: mgl32.Vec3{0.3, 0.5, 0.3},
+		HalfSize: mgl32.Vec3{0.01, 0.01, 0.01},
 	}
 
 	return &player{
@@ -71,6 +71,7 @@ func (p *player) update(elapsed float64) {
 	if !math.IsNaN(float64(dV.Len())) {
 		p.body.SetVelocity(dV)
 	} else {
+		fmt.Println("zero")
 		p.body.SetVelocity(mgl32.Vec3{})
 	}
 }

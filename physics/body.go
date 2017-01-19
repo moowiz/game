@@ -67,6 +67,9 @@ func (b *Body) Resolve(other *Body) {
 	delta := (v2.Add(v1)).Mul(2)
 	fmt.Printf("me %v v %v other %v v %v delta %v\n", b.Position(), b.Velocity(), other.Position(), other.Velocity(), delta)
 	b.velocity = b.velocity.Sub(delta)
+	for b.Collides(other) {
+		b.Tick()
+	}
 }
 
 func (b *Body) Tick() {
