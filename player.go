@@ -65,13 +65,15 @@ func (p *player) getUp() mgl32.Vec3 {
 func (p *player) update(elapsed float64) {
 	dV := p.getDirection().Mul(float32(p.moveAmount))
 	dV = dV.Add(p.getRight().Mul(float32(p.strafeAmount)))
+
+	// No vertical movement for now
 	dV[1] = 0
 	dV = dV.Normalize().Mul(float32(elapsed))
 
 	if !math.IsNaN(float64(dV.Len())) {
 		p.body.SetVelocity(dV)
 	} else {
-		fmt.Println("zero")
+		//fmt.Println("zero")
 		p.body.SetVelocity(mgl32.Vec3{})
 	}
 }

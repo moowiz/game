@@ -90,6 +90,7 @@ func (l *Level) draw(elapsed float64) {
 		obj.draw()
 	}
 }
+
 func floatToVec3(arr []float32) mgl32.Vec3 {
 	if len(arr) != 3 {
 		panic("bad conversion")
