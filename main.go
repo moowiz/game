@@ -75,6 +75,9 @@ func main() {
 	gl.DepthFunc(gl.LESS)
 
 	window.SetKeyCallback(func(w *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
+		if key == glfw.KeyQ {
+			w.SetShouldClose(true)
+		}
 		if key == glfw.KeyW {
 			if action == glfw.Release {
 				p.move(0)

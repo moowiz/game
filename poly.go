@@ -64,6 +64,8 @@ func (p *Poly) getProgram() uint32 {
 }
 
 func (p *Poly) draw(model mgl32.Mat4) {
+	fmt.Printf("drawing %v", p.model)
+
 	if p.material != nil {
 		p.material.draw()
 	}

@@ -5,6 +5,8 @@ import (
 	"image"
 	"image/draw"
 	"io/ioutil"
+	"path/filepath"
+	"runtime"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/mathgl/mgl32"
@@ -38,8 +40,15 @@ func (f *Font) init() error {
 	return err
 }
 
+func getArialPath() string {
+	if runtime.GOOS == "windows" {
+		return filepath.Join("C:/", "Windows", "Fonts", "arial.ttf")
+	}
+	return ""
+}
+
 func newFont() (*Font, error) {
-	contents, err := ioutil.ReadFile("/Library/Fonts/Arial.ttf")
+	contents, err := ioutil.ReadFile(getArialPath())
 	if err != nil {
 		return nil, err
 	}
