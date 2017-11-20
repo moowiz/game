@@ -56,7 +56,6 @@ func readObject(filename string) (*Object, error) {
 	if err != nil {
 		return nil, err
 	}
-	poly.init()
 
 	body, err := of.Physics.Process()
 	if err != nil {

@@ -28,13 +28,13 @@ func readOBJ(filename string) (*Poly, error) {
 func parsePoly(r io.Reader, dataDir string) (*Poly, error) {
 	scanner := bufio.NewScanner(r)
 
-	poly := &Poly{}
 	verts := [][]float32{}
 	uvs := [][]float32{}
 	normals := [][]float32{}
 	vertIndices := [][]int{}
 	uvIndices := [][]int{}
 	normalIndices := [][]int{}
+	var pMat *material
 	var matMap materialMap
 	var err error
 
@@ -100,7 +100,7 @@ func parsePoly(r io.Reader, dataDir string) (*Poly, error) {
 				if num > 3 {
 					fmt.Println("more than 3")
 				}
-				num += 1
+				num++
 			}
 			vertIndices = append(vertIndices, tmpVIs)
 			uvIndices = append(uvIndices, tmpUVIs)
@@ -115,37 +115,39 @@ func parsePoly(r io.Reader, dataDir string) (*Poly, error) {
 				return nil, err
 			}
 		case "usemtl":
-			// fake shit. fix me
 			if !innerScan.Scan() {
 				return nil, fmt.Errorf(
 					"expected material name while reading material")
 			}
 			name := innerScan.Text()
 
-			poly.material = matMap[name]
+			pMat = matMap[name]
 		default:
 			//fmt.Printf("Ignoring line %s\n", scanner.Text())
 		}
 	}
 
+	pVerts := []float32{}
+	pUvs := []float32{}
+	pNormals := []float32{}
 	for i := range vertIndices {
 		face := vertIndices[i]
 		faceUVs := uvIndices[i]
 		faceNormals := normalIndices[i]
 		for ind := range face {
 			vert := verts[face[ind]-1]
-			poly.verts = append(poly.verts, vert...)
+			pVerts = append(pVerts, vert...)
 			if len(faceUVs) > 0 {
 				uv := uvs[faceUVs[ind]-1]
 				//uv[1] = 1 - uv[1]
-				poly.uvs = append(poly.uvs, uv...)
+				pUvs = append(pUvs, uv...)
 			}
 			if len(faceNormals) > 0 {
-				poly.normals = append(poly.normals, normals[faceNormals[ind]-1]...)
+				pNormals = append(pNormals, normals[faceNormals[ind]-1]...)
 			}
 		}
 	}
-	return poly, nil
+	return NewPoly(pVerts, pUvs, pNormals, pMat)
 }
 
 type materialMap map[string]*material

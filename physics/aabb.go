@@ -55,26 +55,20 @@ func (a *AABB) debugDraw(program uint32) {
 	gl.BindVertexArray(a.vao)
 	gl.EnableVertexAttribArray(0)
 
-	for i := 0; i < 3*6; i += 3 {
-		gl.DrawArrays(gl.LINE_LOOP, 0, int32(3*6))
-	}
+	gl.DrawArrays(gl.LINE_LOOP, 0, int32(len(cubeVerts)))
 
 	gl.DisableVertexAttribArray(0)
 }
 
 func (a *AABB) debugInit() {
 	verts := []float32{}
-	for i := -1.0; i < 2; i += 2 {
-		for j := -1.0; j < 2; j += 2 {
-			for k := -1.0; k < 2; k += 2 {
-				v := []float32{
-					a.HalfSize[0] * float32(i),
-					a.HalfSize[1] * float32(j),
-					a.HalfSize[2] * float32(k),
-				}
-				verts = append(verts, v...)
-			}
+	for i := 0; i < len(cubeVerts); i += 3 {
+		v := []float32{
+			a.HalfSize[0] * float32(cubeVerts[i]),
+			a.HalfSize[1] * float32(cubeVerts[i+1]),
+			a.HalfSize[2] * float32(cubeVerts[i+2]),
 		}
+		verts = append(verts, v...)
 	}
 	fmt.Println("verts", verts)
 	gl.GenVertexArrays(1, &a.vao)
@@ -97,4 +91,31 @@ func (a *AABB) NewBody(mass float32) *Body {
 		b:    a,
 		mass: mass,
 	}
+}
+
+var cubeVerts = []float32{
+	//  X, Y, Z, U, V
+	// Bottom
+	-1.0, -1.0, -1.0,
+	1.0, -1.0, -1.0,
+	1.0, -1.0, 1.0,
+	-1.0, -1.0, 1.0,
+
+	// Front
+	// 5
+	-1.0, -1.0, -1.0,
+	-1.0, 1.0, -1.0,
+	1.0, 1.0, -1.0,
+	1.0, 1.0, 1.0,
+
+	// 9
+	-1.0, 1.0, 1.0,
+	-1.0, 1.0, -1.0,
+	-1.0, 1.0, 1.0,
+	-1.0, -1.0, 1.0,
+
+	1.0, -1.0, 1.0,
+	1.0, 1.0, 1.0,
+	1.0, 1.0, -1.0,
+	1.0, -1.0, -1.0,
 }

@@ -154,7 +154,6 @@ func makeSquare() *Poly {
 	if err != nil {
 		panic(err)
 	}
-	square.init()
 	square.pos = mgl32.Translate3D(0, 5, 0)
 	return square
 }

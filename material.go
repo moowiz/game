@@ -155,9 +155,9 @@ func newTexture(file string) (uint32, error) {
 	newP := make([]uint8, len(rgba.Pix))
 	maxX := rgba.Rect.Max.X
 	maxY := rgba.Rect.Max.Y
-	for x := 0; x < maxX; x += 1 {
-		for y := 0; y < maxY; y += 1 {
-			for offset := 0; offset < 4; offset += 1 {
+	for x := 0; x < maxX; x++ {
+		for y := 0; y < maxY; y++ {
+			for offset := 0; offset < 4; offset++ {
 				v := rgba.Pix[y*rgba.Stride+x*4+offset]
 				newP[(maxY-y-1)*rgba.Stride+x*4+offset] = v
 			}

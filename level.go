@@ -54,7 +54,7 @@ func loadLevel(filename string) (*Level, error) {
 		l.phys.AddBody(obj.body)
 	}
 	l.phys.AddBody(l.player.body)
-	shaders, err := readShaders("shaders/wireframe.vert")
+	shaders, err := readShaders("shaders/wireframe.vert", "shaders/wireframe.frag")
 	if err != nil {
 		return nil, err
 	}
@@ -68,6 +68,7 @@ func loadLevel(filename string) (*Level, error) {
 }
 
 func (l *Level) applyBasics(program uint32) {
+	l.player.updateCamera(program)
 	gl.BindFragDataLocation(program, 0, gl.Str("outputColor\x00"))
 
 	projectionUniform := gl.GetUniformLocation(program, gl.Str("projection\x00"))
@@ -80,16 +81,16 @@ func (l *Level) applyBasics(program uint32) {
 func (l *Level) draw(elapsed float64) {
 	l.player.update(elapsed)
 
-	l.phys.Update(l.applyBasics)
+	//l.phys.Update(l.applyBasics)
 	for _, obj := range l.objects {
 		program := obj.poly.getProgram()
 		gl.UseProgram(program)
-		l.player.updateCamera(program)
 		l.applyBasics(program)
 
 		obj.draw()
 	}
 }
+
 func floatToVec3(arr []float32) mgl32.Vec3 {
 	if len(arr) != 3 {
 		panic("bad conversion")
