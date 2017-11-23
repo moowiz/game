@@ -7,17 +7,17 @@ import (
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/glfw/v3.1/glfw"
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/moowiz/game/camera"
 	"github.com/moowiz/game/physics"
 )
 
 var _ = fmt.Print
 
 type player struct {
-	camera                         mgl32.Mat4
-	body                           *physics.Body
-	moveAmount                     int
-	strafeAmount                   int
-	horizontalAngle, verticalAngle float64
+	camera       camera.Camera
+	body         *physics.Body
+	moveAmount   int
+	strafeAmount int
 }
 
 const mouseSpeed = 0.5
@@ -30,9 +30,8 @@ func newPlayer() *player {
 	}
 
 	return &player{
-		body:            box.NewBody(float32(math.Inf(1))),
-		horizontalAngle: 0,
-		verticalAngle:   math.Pi / 2,
+		body:   box.NewBody(float32(math.Inf(1))),
+		camera: camera.NewFPCamera(),
 	}
 }
 
