@@ -79,7 +79,7 @@ func (p *Poly) draw(model mgl32.Mat4) {
 	}
 
 	modelUniform := gl.GetUniformLocation(p.getProgram(), gl.Str("model\x00"))
-	gl.UniformMatrix4fv(modelUniform, 1, false, &p.model[0])
+	gl.UniformMatrix4fv(modelUniform, 1, false, &model[0])
 
 	gl.BindVertexArray(p.vao)
 	gl.EnableVertexAttribArray(0)
