@@ -126,7 +126,6 @@ func (m *material) draw() {
 
 	gl.ActiveTexture(gl.TEXTURE0)
 	gl.BindTexture(gl.TEXTURE_2D, m.diffuseTexMap)
-	//gl.Uniform1i(texLoc, gl.TEXTURE0)
 
 	if m.ambientColor != nil {
 		ambientLoc := gl.GetUniformLocation(m.program, gl.Str("ambientColor\x00"))

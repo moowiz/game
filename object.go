@@ -9,12 +9,14 @@ import (
 	"github.com/moowiz/game/physics"
 )
 
+// Object contains a polygon, along with an associated physics body.
 type Object struct {
 	id   string
 	poly *Poly
 	body *physics.Body
 }
 
+// draw
 func (o *Object) draw() {
 	pos := o.body.Position()
 	model := mgl32.Translate3D(pos[0], pos[1], pos[2])

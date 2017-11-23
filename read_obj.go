@@ -147,7 +147,7 @@ func parsePoly(r io.Reader, dataDir string) (*Poly, error) {
 			}
 		}
 	}
-	return NewPoly(pVerts, pUvs, pNormals, pMat)
+	return NewPoly(pMat, pVerts, pUvs, pNormals)
 }
 
 type materialMap map[string]*material

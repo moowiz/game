@@ -9,6 +9,8 @@ import (
 
 var _ = fmt.Print
 
+// Poly contains a set of vertices and associated vertex data, along with
+// a material.
 type Poly struct {
 	// HEY YOU. Yes you. Don't remove these. Removing these makes all polys break. I think
 	// it has to do with how pointers are handled in open gl. If we don't keep a pointer to this around, then
@@ -23,21 +25,15 @@ type Poly struct {
 
 	vao      uint32
 	material *material
-	model    mgl32.Mat4
-	pos      mgl32.Mat4
 }
 
-func NewPoly(verts, uvs, normals []float32, material *material) (*Poly, error) {
+func NewPoly(material *material, verts, uvs, normals []float32) (*Poly, error) {
 	p := &Poly{
-		verts:       verts,
-		uvs:         uvs,
-		normals:     normals,
-		numVerts:    int32(len(verts) / 3),
-		haveUVs:     len(uvs) > 0,
-		haveNormals: len(normals) > 0,
-		material:    material,
+		material: material,
+		verts:    verts,
+		uvs:      uvs,
+		normals:  normals,
 	}
-
 	gl.GenVertexArrays(1, &p.vao)
 	gl.BindVertexArray(p.vao)
 
@@ -69,8 +65,6 @@ func NewPoly(verts, uvs, normals []float32, material *material) (*Poly, error) {
 		gl.VertexAttribPointer(2, 3, gl.FLOAT, false, 3*4, gl.PtrOffset(0))
 	}
 
-	//gl.BindBuffer(gl.ARRAY_BUFFER, 0)
-
 	return p, nil
 }
 
@@ -78,9 +72,8 @@ func (p *Poly) getProgram() uint32 {
 	return p.material.program
 }
 
+// draw draws this poly in the given location in world space.
 func (p *Poly) draw(model mgl32.Mat4) {
-	//fmt.Printf("drawing %v", p.model)
-
 	if p.material != nil {
 		p.material.draw()
 	}
