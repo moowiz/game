@@ -4,16 +4,6 @@
 	  "id": "cube",
 	  "object": "cube",
 	  "location": [0, -0.5, 3]
-	},
-	{
-	  "id": "cube2",
-	  "object": "cube",
-	  "location": [3, -0.5, 3]
-	},
-	{
-	  "id": "r2d2",
-	  "object": "r2d2",
-	  "location": [3, -0.5, 0]
 	}
   ]
 }

@@ -70,7 +70,7 @@ func (p *player) update(elapsed float64) {
 	dV[1] = 0
 	dV = dV.Normalize().Mul(float32(elapsed))
 
-	fmt.Printf("hi %v\n", dV.Len())
+	//fmt.Printf("hi %v\n", dV.Len())
 	if !math.IsNaN(float64(dV.Len())) {
 		p.body.SetVelocity(dV)
 	} else {

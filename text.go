@@ -42,7 +42,7 @@ func (f *Font) init() error {
 
 func getFontName() (string, error) {
 	if runtime.GOOS == "darwin" {
-		return "Library/Fonts/Arial.ttf", nil
+		return "/Library/Fonts/Arial.ttf", nil
 	} else if runtime.GOOS == "windows" {
 		return "C:\\Windows\\Fonts\\arial.ttf", nil
 	}

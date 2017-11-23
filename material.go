@@ -119,20 +119,22 @@ func (m *material) init() {
 func (m *material) draw() {
 	if m.diffuseColor != nil {
 		diffuseLoc := gl.GetUniformLocation(m.program, gl.Str("diffuseColor\x00"))
-		gl.Uniform3f(diffuseLoc, m.diffuseColor[0]*20, m.diffuseColor[1]*20, m.diffuseColor[2]*20)
+		gl.Uniform3f(diffuseLoc, m.diffuseColor[0], m.diffuseColor[1], m.diffuseColor[2])
 	}
+
+	//texLoc := gl.GetUniformLocation(m.program, gl.Str("tex\x00"))
 
 	gl.ActiveTexture(gl.TEXTURE0)
 	gl.BindTexture(gl.TEXTURE_2D, m.diffuseTexMap)
-	//gl.Uniform1i(diffuseMapLoc, gl.TEXTURE0)
+	//gl.Uniform1i(texLoc, gl.TEXTURE0)
 
 	if m.ambientColor != nil {
 		ambientLoc := gl.GetUniformLocation(m.program, gl.Str("ambientColor\x00"))
-		gl.Uniform3f(ambientLoc, m.ambientColor[0]*20, m.ambientColor[1]*20, m.ambientColor[2]*20)
+		gl.Uniform3f(ambientLoc, m.ambientColor[0], m.ambientColor[1], m.ambientColor[2])
 	}
 	if m.specularColor != nil {
 		specularLoc := gl.GetUniformLocation(m.program, gl.Str("specularColor\x00"))
-		gl.Uniform3f(specularLoc, m.specularColor[0]*20, m.specularColor[1]*20, m.specularColor[2]*20)
+		gl.Uniform3f(specularLoc, m.specularColor[0], m.specularColor[1], m.specularColor[2])
 	}
 }
 

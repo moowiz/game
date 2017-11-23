@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"runtime"
+	"unsafe"
 	//gtime "time"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
@@ -21,6 +22,17 @@ var rootDir string
 func init() {
 	// GLFW event handling must run on the main OS thread
 	runtime.LockOSThread()
+}
+
+func callbackThing(source uint32, gltype uint32, id uint32, severity uint32, length int32, message string, userParam unsafe.Pointer) {
+
+	fmt.Printf("DEBUG MAN\n")
+}
+func checkErr() {
+	res := gl.GetError()
+	if res != 0 {
+		fmt.Printf("err %v\n", res)
+	}
 }
 
 func main() {
@@ -112,6 +124,7 @@ func main() {
 	sinceFPS := 0.0
 	fps := -1
 	for !window.ShouldClose() {
+		checkErr()
 		gl.ClearColor(1.0, 1.0, 1.0, 1.0)
 		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 

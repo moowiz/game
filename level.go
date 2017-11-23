@@ -47,22 +47,22 @@ func loadLevel(filename string) (*Level, error) {
 		}
 
 		obj.id = objLoad.ID
-		if obj.body != nil && objLoad.Location != nil {
-			obj.body.SetPosition(floatToVec3(objLoad.Location))
-		}
+		//if obj.body != nil && objLoad.Location != nil {
+		//	obj.body.SetPosition(floatToVec3(objLoad.Location))
+		//}
 		l.objects = append(l.objects, obj)
-		l.phys.AddBody(obj.body)
+		//l.phys.AddBody(obj.body)
 	}
-	l.phys.AddBody(l.player.body)
-	shaders, err := readShaders("shaders/wireframe.vert", "shaders/wireframe.frag")
-	if err != nil {
-		return nil, err
-	}
-	prog, err := newProgram(shaders...)
-	if err != nil {
-		return nil, err
-	}
-	l.phys.DebugInit(prog)
+	//l.phys.AddBody(l.player.body)
+	// shaders, err := readShaders("shaders/wireframe.vert", "shaders/wireframe.frag")
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// prog, err := newProgram(shaders...)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	//l.phys.DebugInit(prog)
 
 	return l, nil
 }

@@ -48,7 +48,6 @@ func NewPoly(verts, uvs, normals []float32, material *material) (*Poly, error) {
 
 	gl.EnableVertexAttribArray(0)
 	gl.VertexAttribPointer(0, 3, gl.FLOAT, false, 3*4, gl.PtrOffset(0))
-	gl.DisableVertexAttribArray(0)
 
 	if p.haveUVs {
 		var uvID uint32
@@ -58,7 +57,6 @@ func NewPoly(verts, uvs, normals []float32, material *material) (*Poly, error) {
 
 		gl.EnableVertexAttribArray(1)
 		gl.VertexAttribPointer(1, 2, gl.FLOAT, false, 2*4, gl.PtrOffset(0))
-		gl.DisableVertexAttribArray(1)
 	}
 
 	if p.haveNormals {
@@ -69,10 +67,9 @@ func NewPoly(verts, uvs, normals []float32, material *material) (*Poly, error) {
 
 		gl.EnableVertexAttribArray(2)
 		gl.VertexAttribPointer(2, 3, gl.FLOAT, false, 3*4, gl.PtrOffset(0))
-		gl.DisableVertexAttribArray(2)
 	}
 
-	gl.BindBuffer(gl.ARRAY_BUFFER, 0)
+	//gl.BindBuffer(gl.ARRAY_BUFFER, 0)
 
 	return p, nil
 }
@@ -82,7 +79,7 @@ func (p *Poly) getProgram() uint32 {
 }
 
 func (p *Poly) draw(model mgl32.Mat4) {
-	fmt.Printf("drawing %v", p.model)
+	//fmt.Printf("drawing %v", p.model)
 
 	if p.material != nil {
 		p.material.draw()
