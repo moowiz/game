@@ -12,16 +12,10 @@ var _ = fmt.Print
 // Poly contains a set of vertices and associated vertex data, along with
 // a material.
 type Poly struct {
-	// HEY YOU. Yes you. Don't remove these. Removing these makes all polys break. I think
-	// it has to do with how pointers are handled in open gl. If we don't keep a pointer to this around, then
-	// I think the Go GC cleans it up and we're sad. We should be able to do this more efficiently or
-	// something. Idk ¯\_(ツ)_/¯
-	verts       []float32
-	uvs         []float32
-	normals     []float32
-	numVerts    int32
-	haveUVs     bool
-	haveNormals bool
+	verts    []float32
+	numVerts int
+	uvs      []float32
+	normals  []float32
 
 	vao      uint32
 	material *material
@@ -31,6 +25,7 @@ func NewPoly(material *material, verts, uvs, normals []float32) (*Poly, error) {
 	p := &Poly{
 		material: material,
 		verts:    verts,
+		numVerts: len(verts),
 		uvs:      uvs,
 		normals:  normals,
 	}
@@ -40,29 +35,32 @@ func NewPoly(material *material, verts, uvs, normals []float32) (*Poly, error) {
 	var vertID uint32
 	gl.GenBuffers(1, &vertID)
 	gl.BindBuffer(gl.ARRAY_BUFFER, vertID)
-	gl.BufferData(gl.ARRAY_BUFFER, len(verts)*4, gl.Ptr(verts), gl.STATIC_DRAW)
+	gl.BufferData(gl.ARRAY_BUFFER, p.numVerts*4, gl.Ptr(p.verts), gl.STATIC_DRAW)
 
 	gl.EnableVertexAttribArray(0)
 	gl.VertexAttribPointer(0, 3, gl.FLOAT, false, 3*4, gl.PtrOffset(0))
+	gl.DisableVertexAttribArray(0)
 
-	if p.haveUVs {
+	if len(p.uvs) > 0 {
 		var uvID uint32
 		gl.GenBuffers(1, &uvID)
 		gl.BindBuffer(gl.ARRAY_BUFFER, uvID)
-		gl.BufferData(gl.ARRAY_BUFFER, len(uvs)*4, gl.Ptr(uvs), gl.STATIC_DRAW)
+		gl.BufferData(gl.ARRAY_BUFFER, len(p.uvs)*4, gl.Ptr(p.uvs), gl.STATIC_DRAW)
 
 		gl.EnableVertexAttribArray(1)
 		gl.VertexAttribPointer(1, 2, gl.FLOAT, false, 2*4, gl.PtrOffset(0))
+		gl.DisableVertexAttribArray(1)
 	}
 
-	if p.haveNormals {
+	if len(p.normals) > 0 {
 		var normalID uint32
 		gl.GenBuffers(1, &normalID)
 		gl.BindBuffer(gl.ARRAY_BUFFER, normalID)
-		gl.BufferData(gl.ARRAY_BUFFER, len(normals)*4, gl.Ptr(normals), gl.STATIC_DRAW)
+		gl.BufferData(gl.ARRAY_BUFFER, len(p.normals)*4, gl.Ptr(p.normals), gl.STATIC_DRAW)
 
 		gl.EnableVertexAttribArray(2)
 		gl.VertexAttribPointer(2, 3, gl.FLOAT, false, 3*4, gl.PtrOffset(0))
+		gl.DisableVertexAttribArray(2)
 	}
 
 	return p, nil
@@ -83,20 +81,20 @@ func (p *Poly) draw(model mgl32.Mat4) {
 
 	gl.BindVertexArray(p.vao)
 	gl.EnableVertexAttribArray(0)
-	if p.haveUVs {
+	if len(p.uvs) > 0 {
 		gl.EnableVertexAttribArray(1)
 	}
-	if p.haveNormals {
+	if len(p.normals) > 0 {
 		gl.EnableVertexAttribArray(2)
 	}
 
-	gl.DrawArrays(gl.TRIANGLES, 0, p.numVerts)
+	gl.DrawArrays(gl.TRIANGLES, 0, int32(p.numVerts/3))
 
 	gl.DisableVertexAttribArray(0)
-	if p.haveUVs {
+	if len(p.uvs) > 0 {
 		gl.DisableVertexAttribArray(1)
 	}
-	if p.haveNormals {
+	if len(p.normals) > 0 {
 		gl.DisableVertexAttribArray(2)
 	}
 }

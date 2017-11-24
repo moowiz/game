@@ -47,9 +47,9 @@ func loadLevel(filename string) (*Level, error) {
 		}
 
 		obj.id = objLoad.ID
-		//if obj.body != nil && objLoad.Location != nil {
-		//	obj.body.SetPosition(floatToVec3(objLoad.Location))
-		//}
+		if obj.body != nil && objLoad.Location != nil {
+			obj.body.SetPosition(floatToVec3(objLoad.Location))
+		}
 		l.objects = append(l.objects, obj)
 		l.phys.AddBody(obj.body)
 	}
