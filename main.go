@@ -40,7 +40,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("Root is %v\n", rootDir)
 
 	if err := glfw.Init(); err != nil {
 		log.Fatalln("failed to initialize glfw:", err)
@@ -63,12 +62,6 @@ func main() {
 	if err := gl.Init(); err != nil {
 		panic(err)
 	}
-
-	version := gl.GoStr(gl.GetString(gl.VERSION))
-	fmt.Println("OpenGL version", version)
-
-	// Configure the vertex data
-	//square := makeSquare()
 
 	level, err := loadLevel("data/levels/basic.json")
 	if err != nil {

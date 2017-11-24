@@ -81,7 +81,7 @@ func (l *Level) applyBasics(program uint32) {
 func (l *Level) draw(elapsed float64) {
 	l.player.update(elapsed)
 
-	//l.phys.Update(l.applyBasics)
+	l.phys.Update(l.applyBasics)
 	for _, obj := range l.objects {
 		program := obj.poly.getProgram()
 		gl.UseProgram(program)
