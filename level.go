@@ -10,12 +10,13 @@ import (
 	"github.com/moowiz/game/camera"
 	"github.com/moowiz/game/physics"
 	"github.com/moowiz/game/player"
+	"github.com/moowiz/game/shader"
 )
 
 var _ = fmt.Print
 
 type Level struct {
-	camera     camera.Camera
+	camera     *camera.FPCamera
 	objects    []*Object
 	phys       *physics.World
 	player     *player.FPPlayer
@@ -58,11 +59,7 @@ func loadLevel(filename string) (*Level, error) {
 		l.phys.AddBody(obj.body)
 	}
 	l.phys.AddBody(l.player.Body)
-	shaders, err := readShaders("shaders/wireframe.vert", "shaders/wireframe.frag")
-	if err != nil {
-		return nil, err
-	}
-	prog, err := newProgram(shaders...)
+	prog, err := shader.ProgramForShaders("wireframe.vert", "wireframe.frag")
 	if err != nil {
 		return nil, err
 	}

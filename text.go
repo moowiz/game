@@ -12,6 +12,8 @@ import (
 
 	"github.com/golang/freetype"
 	"golang.org/x/image/font"
+
+	"github.com/moowiz/game/shader"
 )
 
 var _ = fmt.Print
@@ -28,12 +30,12 @@ type Font struct {
 }
 
 func (f *Font) init() error {
-	shaders, err := readShaders("shaders/text.frag", "shaders/text.vert")
+	var err error
+	f.program, err = shader.ProgramForShaders("text.frag", "text.vert")
 	if err != nil {
 		return err
 	}
 
-	f.program, err = newProgram(shaders...)
 	f.size = 24.0
 	f.spacing = 1.5
 	f.setUpGL()

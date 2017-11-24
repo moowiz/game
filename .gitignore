@@ -3,3 +3,4 @@
 .vscode*
 game
 game.exe
+.DS_Store

@@ -52,10 +52,12 @@ func (b *Body) EnsureForce(f Force) {
 }
 
 func (b *Body) Collides(other *Body) bool {
+	return false
 	return b.b.Collides(other.b)
 }
 
 func (b *Body) Resolve(other *Body) {
+	return
 	v1 := b.Velocity()
 	v2 := other.Velocity()
 	//m1 := b.mass

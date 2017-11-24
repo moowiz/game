@@ -15,6 +15,8 @@ import (
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	_ "golang.org/x/image/bmp"
+
+	"github.com/moowiz/game/shader"
 )
 
 func parseMaterialFromFile(filename string, dataDir string) (*material, error) {
@@ -90,15 +92,11 @@ func parseMaterial(scanner *bufio.Scanner, dataDir string) (*material, error) {
 	}
 
 	//TODO: Figure out which shaders to use
-	shaders, err := compileShaders(mat.illum)
+	mat.program, err = shader.ProgramFromIllum(mat.illum)
 	if err != nil {
 		return nil, err
 	}
 
-	mat.program, err = newProgram(shaders...)
-	if err != nil {
-		return nil, err
-	}
 	return mat, nil
 }
 
@@ -121,8 +119,6 @@ func (m *material) draw() {
 		diffuseLoc := gl.GetUniformLocation(m.program, gl.Str("diffuseColor\x00"))
 		gl.Uniform3f(diffuseLoc, m.diffuseColor[0], m.diffuseColor[1], m.diffuseColor[2])
 	}
-
-	//texLoc := gl.GetUniformLocation(m.program, gl.Str("tex\x00"))
 
 	gl.ActiveTexture(gl.TEXTURE0)
 	gl.BindTexture(gl.TEXTURE_2D, m.diffuseTexMap)

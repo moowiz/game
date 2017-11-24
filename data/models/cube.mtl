@@ -5,5 +5,5 @@ Kd 1.0 0 0
 Ks 0.001176 0.001176 0.001176
 Ni 1.000000
 d 1.000000
-illum 1
+illum 0
 map_Kd cubemap.jpg

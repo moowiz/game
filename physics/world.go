@@ -20,7 +20,8 @@ func (w *World) AddBody(b *Body) {
 
 func (w *World) DebugInit(prog uint32) {
 	w.debugProg = prog
-	w.debug = true
+	w.debug = false
+	return
 	for _, body := range w.bodies {
 		body.b.debugInit()
 	}

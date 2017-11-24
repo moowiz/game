@@ -29,6 +29,7 @@ func (a *AABB) SetPosition(new mgl32.Vec3) {
 }
 
 func (a *AABB) Collides(b body) bool {
+	return false
 	other, ok := b.(*AABB)
 	if !ok {
 		panic("Only AABB for now")
@@ -70,7 +71,6 @@ func (a *AABB) debugInit() {
 		}
 		verts = append(verts, v...)
 	}
-	fmt.Println("verts", verts)
 	gl.GenVertexArrays(1, &a.vao)
 	gl.BindVertexArray(a.vao)
 
