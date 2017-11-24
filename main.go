@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"runtime"
-	"unsafe"
 	//gtime "time"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
@@ -23,10 +22,6 @@ func init() {
 	runtime.LockOSThread()
 }
 
-func callbackThing(source uint32, gltype uint32, id uint32, severity uint32, length int32, message string, userParam unsafe.Pointer) {
-
-	fmt.Printf("DEBUG MAN\n")
-}
 func checkErr() {
 	res := gl.GetError()
 	if res != 0 {
@@ -82,33 +77,8 @@ func main() {
 		if key == glfw.KeyQ {
 			w.SetShouldClose(true)
 		}
-		if key == glfw.KeyW {
-			if action == glfw.Release {
-				p.move(0)
-			} else if action == glfw.Press {
-				p.move(1)
-			}
-		}
-		if key == glfw.KeyS {
-			if action == glfw.Release {
-				p.move(0)
-			} else if action == glfw.Press {
-				p.move(-1)
-			}
-		}
-		if key == glfw.KeyD {
-			if action == glfw.Release {
-				p.strafe(0)
-			} else if action == glfw.Press {
-				p.strafe(1)
-			}
-		}
-		if key == glfw.KeyA {
-			if action == glfw.Release {
-				p.strafe(0)
-			} else if action == glfw.Press {
-				p.strafe(-1)
-			}
+		if p.HandleInput(key, scancode, action, mods) {
+			return
 		}
 	})
 
@@ -126,7 +96,7 @@ func main() {
 		elapsed := time - previousTime
 		previousTime = time
 
-		p.updateWindow(window, elapsed)
+		p.UpdateWindow(window, elapsed)
 
 		level.draw(elapsed)
 
@@ -137,7 +107,7 @@ func main() {
 			sinceFPS += elapsed
 		}
 
-		font.Printf(10, 30, "%v %v", p.body.Position()[0], p.body.Position()[2])
+		font.Printf(10, 30, "%v %v", p.Body.Position()[0], p.Body.Position()[2])
 		if fps != -1 {
 			font.Printf(10, 10, "%v", fps)
 		}

@@ -9,6 +9,7 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/moowiz/game/camera"
 	"github.com/moowiz/game/physics"
+	"github.com/moowiz/game/player"
 )
 
 var _ = fmt.Print
@@ -17,7 +18,7 @@ type Level struct {
 	camera     camera.Camera
 	objects    []*Object
 	phys       *physics.World
-	player     *player
+	player     *player.FPPlayer
 	projection mgl32.Mat4
 	lightPos   []float32
 }
@@ -25,12 +26,12 @@ type Level struct {
 func loadLevel(filename string) (*Level, error) {
 	l := &Level{
 		phys:   &physics.World{},
-		player: newPlayer(),
+		player: player.NewFPPlayer(),
 		projection: mgl32.Perspective(
 			mgl32.DegToRad(60.0), float32(windowWidth)/windowHeight, 0.1, 100.0),
 		lightPos: []float32{4, 4, 4},
 	}
-	l.camera = l.player.camera
+	l.camera = l.player.Camera
 	lf := &levelFile{}
 	f, err := os.Open(filename)
 	if err != nil {
@@ -56,7 +57,7 @@ func loadLevel(filename string) (*Level, error) {
 		l.objects = append(l.objects, obj)
 		l.phys.AddBody(obj.body)
 	}
-	l.phys.AddBody(l.player.body)
+	l.phys.AddBody(l.player.Body)
 	shaders, err := readShaders("shaders/wireframe.vert", "shaders/wireframe.frag")
 	if err != nil {
 		return nil, err
@@ -82,7 +83,7 @@ func (l *Level) applyBasics(program uint32) {
 }
 
 func (l *Level) draw(elapsed float64) {
-	l.player.update(elapsed)
+	l.player.Update(elapsed)
 
 	l.phys.Update(l.applyBasics)
 	for _, obj := range l.objects {
