@@ -7,12 +7,14 @@ import (
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/moowiz/game/camera"
 	"github.com/moowiz/game/physics"
 )
 
 var _ = fmt.Print
 
 type Level struct {
+	camera     camera.Camera
 	objects    []*Object
 	phys       *physics.World
 	player     *player
@@ -28,6 +30,7 @@ func loadLevel(filename string) (*Level, error) {
 			mgl32.DegToRad(60.0), float32(windowWidth)/windowHeight, 0.1, 100.0),
 		lightPos: []float32{4, 4, 4},
 	}
+	l.camera = l.player.camera
 	lf := &levelFile{}
 	f, err := os.Open(filename)
 	if err != nil {
@@ -68,7 +71,7 @@ func loadLevel(filename string) (*Level, error) {
 }
 
 func (l *Level) applyBasics(program uint32) {
-	l.player.updateCamera(program)
+	l.camera.Setup(program)
 	gl.BindFragDataLocation(program, 0, gl.Str("outputColor\x00"))
 
 	projectionUniform := gl.GetUniformLocation(program, gl.Str("projection\x00"))

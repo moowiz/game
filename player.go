@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/glfw/v3.1/glfw"
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/moowiz/game/camera"
@@ -31,10 +30,15 @@ func newPlayer() *player {
 		HalfSize: mgl32.Vec3{0.01, 0.01, 0.01},
 	}
 
-	return &player{
-		body:   box.NewBody(float32(math.Inf(1))),
-		camera: camera.NewFPCamera(),
+	var p *player
+
+	p = &player{
+		body: box.NewBody(float32(math.Inf(1))),
+		camera: camera.NewFPCamera(func() mgl32.Vec3 {
+			return p.body.Position()
+		}),
 	}
+	return p
 }
 
 func (p *player) update(elapsed float64) {
@@ -53,9 +57,6 @@ func (p *player) update(elapsed float64) {
 }
 
 func (p *player) updateCamera(program uint32) {
-	p.mat = p.camera.GetCamera(p.body.Position())
-	cameraUniform := gl.GetUniformLocation(program, gl.Str("camera\x00"))
-	gl.UniformMatrix4fv(cameraUniform, 1, false, &p.mat[0])
 }
 
 var lastX, lastY float64 = -10000, -10000
