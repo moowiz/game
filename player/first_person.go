@@ -7,6 +7,7 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 
 	"github.com/moowiz/game/camera"
+	"github.com/moowiz/game/input"
 	"github.com/moowiz/game/physics"
 )
 
@@ -35,37 +36,37 @@ func NewFPPlayer() *FPPlayer {
 	return p
 }
 
-func (f *FPPlayer) HandleInput(key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) bool {
+func (f *FPPlayer) HandleInput(ki *input.KeyInput) bool {
 	swallow := false
-	if key == glfw.KeyW {
+	if ki.Key == glfw.KeyW {
 		swallow = true
-		if action == glfw.Release {
+		if ki.Action == glfw.Release {
 			f.move = 0
-		} else if action == glfw.Press {
+		} else if ki.Action == glfw.Press {
 			f.move = 1
 		}
 	}
-	if key == glfw.KeyS {
+	if ki.Key == glfw.KeyS {
 		swallow = true
-		if action == glfw.Release {
+		if ki.Action == glfw.Release {
 			f.move = 0
-		} else if action == glfw.Press {
+		} else if ki.Action == glfw.Press {
 			f.move = -1
 		}
 	}
-	if key == glfw.KeyD {
+	if ki.Key == glfw.KeyD {
 		swallow = true
-		if action == glfw.Release {
+		if ki.Action == glfw.Release {
 			f.strafe = 0
-		} else if action == glfw.Press {
+		} else if ki.Action == glfw.Press {
 			f.strafe = 1
 		}
 	}
-	if key == glfw.KeyA {
+	if ki.Key == glfw.KeyA {
 		swallow = true
-		if action == glfw.Release {
+		if ki.Action == glfw.Release {
 			f.strafe = 0
-		} else if action == glfw.Press {
+		} else if ki.Action == glfw.Press {
 			f.strafe = -1
 		}
 	}

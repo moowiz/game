@@ -9,6 +9,8 @@ import (
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/glfw/v3.1/glfw"
+
+	"github.com/moowiz/game/input"
 )
 
 const windowWidth = 800
@@ -77,7 +79,13 @@ func main() {
 		if key == glfw.KeyQ {
 			w.SetShouldClose(true)
 		}
-		if p.HandleInput(key, scancode, action, mods) {
+		ki := &input.KeyInput{
+			Key:      key,
+			Scancode: scancode,
+			Action:   action,
+			Mods:     mods,
+		}
+		if p.HandleInput(ki) {
 			return
 		}
 	})
