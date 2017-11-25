@@ -12,10 +12,10 @@ uniform sampler2D tex;
 uniform vec3 light;
 uniform vec3 diffuseColor;
 uniform vec3 ambientColor;
+uniform float LightPower;
 
 void main() {
 	vec3 LightColor = vec3(1,1,1);
-	float LightPower = 500.0f;
 
 	// Material properties
 	vec3 MaterialDiffuseColor = texture(tex, fragUV).rgb;
@@ -38,7 +38,6 @@ void main() {
 	color = 
 		// Ambient : simulates indirect lighting
 		MaterialAmbientColor +
-		// Diffuse : "color" of the object
+		// Dif2se : "color" of the object
 		MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance);
-	//color = MaterialDiffuseColor;
 }

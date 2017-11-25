@@ -3,7 +3,17 @@
 	{
 	  "id": "r2d2",
 	  "object": "r2d2",
-	  "location": [0, 0, 2]
+	  "location": [0, 0, 1.5]
+	},
+	{
+	  "id": "plane",
+	  "object": "plane",
+	  "location": [-5, -1, -5]
+	},
+	{
+	  "id": "r2d2",
+	  "object": "r2d2",
+	  "location": [-1.5, 0, 1.5]
 	}
   ]
 }

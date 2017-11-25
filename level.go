@@ -22,6 +22,7 @@ type Level struct {
 	player     *player.FPPlayer
 	projection mgl32.Mat4
 	lightPos   []float32
+	LightPower float32
 }
 
 func loadLevel(filename string) (*Level, error) {
@@ -30,7 +31,8 @@ func loadLevel(filename string) (*Level, error) {
 		player: player.NewFPPlayer(),
 		projection: mgl32.Perspective(
 			mgl32.DegToRad(60.0), float32(windowWidth)/windowHeight, 0.1, 100.0),
-		lightPos: []float32{4, 4, 4},
+		lightPos:   []float32{0, 1, -2},
+		LightPower: 15,
 	}
 	l.camera = l.player.Camera
 	lf := &levelFile{}
@@ -77,6 +79,9 @@ func (l *Level) applyBasics(program uint32) {
 
 	lightUniform := gl.GetUniformLocation(program, gl.Str("light\x00"))
 	gl.Uniform3f(lightUniform, l.lightPos[0], l.lightPos[1], l.lightPos[2])
+
+	lightPowerUniform := gl.GetUniformLocation(program, gl.Str("LightPower\x00"))
+	gl.Uniform1f(lightPowerUniform, l.LightPower)
 }
 
 func (l *Level) draw(elapsed float64) {

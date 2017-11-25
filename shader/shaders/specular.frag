@@ -13,15 +13,16 @@ uniform vec3 light;
 uniform vec3 diffuseColor;
 uniform vec3 ambientColor;
 uniform vec3 specularColor;
+uniform float LightPower;
 uniform int illum;
 
 void main() {
 	vec3 LightColor = vec3(1,1,1);
-	float LightPower = 50.0f;
 
 	// Material properties
 	vec3 MaterialDiffuseColor = texture(tex, fragUV).rgb * diffuseColor;
 	vec3 MaterialAmbientColor = ambientColor * diffuseColor;
+    vec3 MaterialSpecularColor = vec3(0.3,0.3,0.3);
 
 	// Distance to the light
 	float distance = length(light - positionWorld);
@@ -51,7 +52,7 @@ void main() {
 		// Ambient : simulates indirect lighting
 		MaterialAmbientColor +
 		// Diffuse : "color" of the object
-		diffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +
+		MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +
 		// Specular : reflective highlight, like a mirror
-		specularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
+		MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
 }

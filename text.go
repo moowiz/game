@@ -140,6 +140,8 @@ func (f *Font) Draw() error {
 	// Clear for next time
 	bg := image.Transparent
 	draw.Draw(f.rgba, f.rgba.Bounds(), bg, image.ZP, draw.Src)
+
+	gl.Disable(gl.BLEND)
 	return nil
 }
 

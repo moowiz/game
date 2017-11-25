@@ -13,8 +13,8 @@ import (
 	"github.com/moowiz/game/input"
 )
 
-const windowWidth = 800
-const windowHeight = 600
+const windowWidth = 1024
+const windowHeight = 768
 const secondsPerFrame = 1 / 60
 
 var rootDir string
@@ -79,6 +79,12 @@ func main() {
 		if key == glfw.KeyQ {
 			w.SetShouldClose(true)
 		}
+		if key == glfw.KeyK {
+			level.LightPower += 1
+		}
+		if key == glfw.KeyL {
+			level.LightPower -= 1
+		}
 		ki := &input.KeyInput{
 			Key:      key,
 			Scancode: scancode,
@@ -115,6 +121,7 @@ func main() {
 			sinceFPS += elapsed
 		}
 
+		font.Printf(10, 50, "%v", level.LightPower)
 		font.Printf(10, 30, "%v %v", p.Body.Position()[0], p.Body.Position()[2])
 		if fps != -1 {
 			font.Printf(10, 10, "%v", fps)
