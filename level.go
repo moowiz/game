@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/mathgl/mgl32"
-	"github.com/moowiz/game/camera"
+	//"github.com/moowiz/game/camera"
 	"github.com/moowiz/game/physics"
 	"github.com/moowiz/game/player"
 	"github.com/moowiz/game/shader"
@@ -16,10 +16,9 @@ import (
 var _ = fmt.Print
 
 type Level struct {
-	camera     *camera.FPCamera
 	objects    []*Object
 	phys       *physics.World
-	player     *player.FPPlayer
+	player     *player.Isometric
 	projection mgl32.Mat4
 	lightPos   []float32
 	LightPower float32
@@ -28,13 +27,13 @@ type Level struct {
 func loadLevel(filename string) (*Level, error) {
 	l := &Level{
 		phys:   &physics.World{},
-		player: player.NewFPPlayer(),
+		player: player.NewIsometric(func() mgl32.Vec3 { return mgl32.Vec3{0, 0, 0} }),
 		projection: mgl32.Perspective(
 			mgl32.DegToRad(60.0), float32(windowWidth)/windowHeight, 0.1, 100.0),
 		lightPos:   []float32{0, 1, -2},
 		LightPower: 15,
 	}
-	l.camera = l.player.Camera
+	//l.camera = l.player.Camera
 	lf := &levelFile{}
 	f, err := os.Open(filename)
 	if err != nil {
@@ -60,7 +59,7 @@ func loadLevel(filename string) (*Level, error) {
 		l.objects = append(l.objects, obj)
 		l.phys.AddBody(obj.body)
 	}
-	l.phys.AddBody(l.player.Body)
+	//l.phys.AddBody(l.player.Body)
 	prog, err := shader.ProgramForShaders("wireframe.vert", "wireframe.frag")
 	if err != nil {
 		return nil, err
@@ -71,7 +70,7 @@ func loadLevel(filename string) (*Level, error) {
 }
 
 func (l *Level) applyBasics(program uint32) {
-	l.camera.Setup(program)
+	l.player.Camera.Setup(program)
 	gl.BindFragDataLocation(program, 0, gl.Str("outputColor\x00"))
 
 	projectionUniform := gl.GetUniformLocation(program, gl.Str("projection\x00"))

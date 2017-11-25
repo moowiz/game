@@ -122,7 +122,7 @@ func main() {
 		}
 
 		font.Printf(10, 50, "%v", level.LightPower)
-		font.Printf(10, 30, "%v %v", p.Body.Position()[0], p.Body.Position()[2])
+		//font.Printf(10, 30, "%v %v", p.Body.Position()[0], p.Body.Position()[2])
 		if fps != -1 {
 			font.Printf(10, 10, "%v", fps)
 		}

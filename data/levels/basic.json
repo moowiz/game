@@ -6,9 +6,24 @@
 	  "location": [0, 0, 1.5]
 	},
 	{
+	  "id": "cube",
+	  "object": "cube",
+	  "location": [2, 0, 1.5]
+	},
+	{
 	  "id": "plane",
 	  "object": "plane",
 	  "location": [-5, -1, -5]
+	},
+	{
+	  "id": "plane",
+	  "object": "plane",
+	  "location": [-15, -1, -5]
+	},
+	{
+	  "id": "plane",
+	  "object": "plane",
+	  "location": [-5, -1, -15]
 	},
 	{
 	  "id": "r2d2",
