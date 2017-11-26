@@ -44,7 +44,6 @@ func ProgramForShaders(filenames ...string) (uint32, error) {
 
 func shadersForIllum(illum int) ([]uint32, error) {
 	shaderName, ok := illumToShader[illum]
-	fmt.Printf("doing %v for %v\n", shaderName, illum)
 	if !ok {
 		return nil, fmt.Errorf("no shader found for illumination %v", illum)
 	}
@@ -72,6 +71,7 @@ func getCurrentFilepath() string {
 var shaderForFilename map[string]uint32 = make(map[string]uint32)
 
 func readShader(filename string) (uint32, error) {
+	//fmt.Printf("map %v\n", len(shaderForFilename))
 	if shader, ok := shaderForFilename[filename]; ok {
 		return shader, nil
 	}
@@ -79,8 +79,8 @@ func readShader(filename string) (uint32, error) {
 	shaderType := typeFromExtension(filepath.Ext(filename))
 	currentFile := getCurrentFilepath()
 	shaderDir := filepath.Join(filepath.Dir(currentFile), "shaders")
-	filename = filepath.Join(shaderDir, filename)
-	contents, err := ioutil.ReadFile(filename)
+	fullFilepath := filepath.Join(shaderDir, filename)
+	contents, err := ioutil.ReadFile(fullFilepath)
 	if err != nil {
 		return 0, err
 	}
@@ -104,7 +104,18 @@ func typeFromExtension(ext string) uint32 {
 	}
 }
 
+type shaderKey struct {
+	A, B uint32
+}
+
+var shadersToProgram map[shaderKey]uint32 = make(map[shaderKey]uint32)
+
 func newProgram(shaders ...uint32) (uint32, error) {
+	if len(shaders) == 2 {
+		if prog, ok := shadersToProgram[shaderKey{shaders[0], shaders[1]}]; ok {
+			return prog, nil
+		}
+	}
 	program := gl.CreateProgram()
 	fmt.Printf("making new program %v for shaders %v\n", program, shaders)
 
@@ -123,6 +134,9 @@ func newProgram(shaders ...uint32) (uint32, error) {
 		gl.GetProgramInfoLog(program, logLength, nil, gl.Str(log))
 
 		return 0, fmt.Errorf("failed to link program: %v", log)
+	}
+	if len(shaders) == 2 {
+		shadersToProgram[shaderKey{shaders[0], shaders[1]}] = program
 	}
 
 	return program, nil

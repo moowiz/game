@@ -36,7 +36,7 @@ type physicsSection struct {
 
 func (p *physicsSection) Process() (*physics.Body, error) {
 	if p.AABB != nil {
-		fmt.Printf("aa %s p %s\n", p.AABB, p)
+		//fmt.Printf("aa %s p %s\n", p.AABB, p)
 		return p.AABB.NewBody(p.Mass), nil
 	}
 	return nil, fmt.Errorf("no valid physics")
@@ -63,7 +63,6 @@ func readObject(filename string) (*Object, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("body %s\n", body)
 
 	return &Object{
 		poly: poly,

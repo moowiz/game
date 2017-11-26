@@ -17,7 +17,8 @@ type AABB struct {
 }
 
 func (a *AABB) String() string {
-	return fmt.Sprintf("AABB center %v half size %v", a.Center, a.HalfSize)
+	//return fmt.Sprintf("AABB center %v half size %v", a.Center, a.HalfSize)
+	return ""
 }
 
 func (a *AABB) Position() mgl32.Vec3 {
