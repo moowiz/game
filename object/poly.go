@@ -1,4 +1,4 @@
-package main
+package object
 
 import (
 	"fmt"
@@ -66,7 +66,7 @@ func NewPoly(material *material, verts, uvs, normals []float32) (*Poly, error) {
 	return p, nil
 }
 
-func (p *Poly) getProgram() uint32 {
+func (p *Poly) GetProgram() uint32 {
 	return p.material.program
 }
 
@@ -76,7 +76,7 @@ func (p *Poly) draw(model mgl32.Mat4) {
 		p.material.draw()
 	}
 
-	modelUniform := gl.GetUniformLocation(p.getProgram(), gl.Str("model\x00"))
+	modelUniform := gl.GetUniformLocation(p.GetProgram(), gl.Str("model\x00"))
 	gl.UniformMatrix4fv(modelUniform, 1, false, &model[0])
 
 	gl.BindVertexArray(p.vao)

@@ -1,4 +1,4 @@
-package main
+package object
 
 import (
 	"encoding/json"
@@ -11,17 +11,17 @@ import (
 
 // Object contains a polygon, along with an associated physics body.
 type Object struct {
-	id   string
-	poly *Poly
-	body *physics.Body
+	Id   string
+	Poly *Poly
+	Body *physics.Body
 }
 
 // draw
-func (o *Object) draw() {
-	pos := o.body.Position()
+func (o *Object) Draw() {
+	pos := o.Body.Position()
 	model := mgl32.Translate3D(pos[0], pos[1], pos[2])
 
-	o.poly.draw(model)
+	o.Poly.draw(model)
 }
 
 type objectFile struct {
@@ -42,7 +42,7 @@ func (p *physicsSection) Process() (*physics.Body, error) {
 	return nil, fmt.Errorf("no valid physics")
 }
 
-func readObject(filename string) (*Object, error) {
+func ReadObject(filename string) (*Object, error) {
 	f, err := os.Open(filename)
 	if err != nil {
 		return nil, err
@@ -65,7 +65,7 @@ func readObject(filename string) (*Object, error) {
 	}
 
 	return &Object{
-		poly: poly,
-		body: body,
+		Poly: poly,
+		Body: body,
 	}, nil
 }

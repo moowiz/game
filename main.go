@@ -9,8 +9,11 @@ import (
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/glfw/v3.1/glfw"
+	"github.com/go-gl/mathgl/mgl32"
 
 	"github.com/moowiz/game/input"
+	"github.com/moowiz/game/level"
+	"github.com/moowiz/game/player"
 )
 
 const windowWidth = 1024
@@ -53,18 +56,18 @@ func main() {
 		panic(err)
 	}
 	window.MakeContextCurrent()
-	window.SetInputMode(glfw.CursorMode, glfw.CursorDisabled)
+	//window.SetInputMode(glfw.CursorMode, glfw.CursorDisabled)
 
 	// Initialize Glow
 	if err := gl.Init(); err != nil {
 		panic(err)
 	}
 
-	level, err := loadLevel("data/levels/basic.json")
+	player := player.NewIsometric(func() mgl32.Vec3 { return mgl32.Vec3{0, 0, 0} })
+	lvl, err := level.LoadLevel("data/levels/basic.json", windowWidth, windowHeight, player.Camera)
 	if err != nil {
 		panic(err)
 	}
-	p := level.player
 
 	font, err := newFont()
 	if err != nil {
@@ -80,10 +83,10 @@ func main() {
 			w.SetShouldClose(true)
 		}
 		if key == glfw.KeyK {
-			level.LightPower += 1
+			lvl.LightPower += 1
 		}
 		if key == glfw.KeyL {
-			level.LightPower -= 1
+			lvl.LightPower -= 1
 		}
 		ki := &input.KeyInput{
 			Key:      key,
@@ -91,7 +94,17 @@ func main() {
 			Action:   action,
 			Mods:     mods,
 		}
-		if p.HandleInput(ki) {
+		if player.HandleInput(w, lvl, ki, nil) {
+			return
+		}
+	})
+	window.SetMouseButtonCallback(func(w *glfw.Window, button glfw.MouseButton, action glfw.Action, mod glfw.ModifierKey) {
+		mi := &input.MouseInput{
+			Button: button,
+			Action: action,
+			Mods:   mod,
+		}
+		if player.HandleInput(w, lvl, nil, mi) {
 			return
 		}
 	})
@@ -110,9 +123,10 @@ func main() {
 		elapsed := time - previousTime
 		previousTime = time
 
-		p.UpdateWindow(window, elapsed)
+		player.UpdateWindow(window, elapsed)
+		player.Update(elapsed)
 
-		level.draw(elapsed)
+		lvl.Draw(elapsed)
 
 		if sinceFPS > 1 || fps == -1 {
 			fps = int(1 / elapsed)
@@ -121,7 +135,7 @@ func main() {
 			sinceFPS += elapsed
 		}
 
-		font.Printf(10, 50, "%v", level.LightPower)
+		font.Printf(10, 50, "%v", lvl.LightPower)
 		//font.Printf(10, 30, "%v %v", p.Body.Position()[0], p.Body.Position()[2])
 		if fps != -1 {
 			font.Printf(10, 10, "%v", fps)
@@ -137,12 +151,4 @@ func main() {
 		//fmt.Println("sofar", sofar, "diff", diff)
 		//gtime.Sleep(gtime.Duration(diff) * gtime.Second)
 	}
-}
-
-func makeSquare() *Poly {
-	square, err := readOBJ("data/plane.obj")
-	if err != nil {
-		panic(err)
-	}
-	return square
 }
