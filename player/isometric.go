@@ -1,6 +1,8 @@
 package player
 
 import (
+	"fmt"
+
 	"github.com/go-gl/glfw/v3.1/glfw"
 	"github.com/moowiz/game/camera"
 	"github.com/moowiz/game/input"
@@ -19,7 +21,9 @@ func NewIsometric(source camera.PositionSource) *Isometric {
 
 func (i *Isometric) HandleInput(w *glfw.Window, l *level.Level, ki *input.KeyInput, mi *input.MouseInput) bool {
 	if mi != nil {
-
+		x, y := w.GetCursorPos()
+		obj, vec, err := l.Raytrace(float32(x), float32(y))
+		fmt.Printf("got %v %v %v FROM calling raytrace\n", obj, vec, err)
 	}
 	return false
 }

@@ -96,7 +96,15 @@ func (l *Level) Draw(elapsed float64) {
 
 // Raytraces a click on the screen at the given coordinates.
 // Returns the object, and the position in world space where it was contacted.
-func (l *Level) Raytrace(x, y float64) (*object.Object, mgl32.Vec3, error) {
+func (l *Level) Raytrace(x, y float32) (*object.Object, mgl32.Vec3, error) {
+	a := mgl32.Vec3{x, y, 0}
+	b := mgl32.Vec3{x, y, 20}
+	res, _ := mgl32.UnProject(a, mgl32.Ident4(), l.projection, 0, 0, 1024, 768)
+	initial := res
+	res, _ = mgl32.UnProject(b, mgl32.Ident4(), l.projection, 0, 0, 1024, 768)
+	offset := res.Sub(initial).Normalize()
+	fmt.Printf("got initial %v offset %v\n", initial, offset)
+	//res2 :=
 	return nil, mgl32.Vec3{0, 0, 0}, nil
 
 }
